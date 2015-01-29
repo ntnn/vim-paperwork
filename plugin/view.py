@@ -22,6 +22,7 @@ class PaperworkBuffers:
     def __init__(self, pw, version):
         self.sidebarbuffer = None
         self.notebuffers = {}
+        self.tempfiles = {}
         self.pw = pw
         self.version = version
 
@@ -45,12 +46,13 @@ class PaperworkBuffers:
         util.set_scratch()
 
     def open_note_buffer(self, note):
-        """Opens file in current buffer."""
-        filepath = util.get_filepath(note.title)
-        vim.command('edit {}'.format(filepath))
+        """Creates temporary file and opens it."""
+        tempfile = util.get_tempfile()
+        vim.command('edit {}'.format(tempfile.name))
         vim.current.buffer[:] = note.content.splitlines()
         vim.command('write!')
         self.notebuffers[note.id] = vim.current.buffer
+        self.tempfiles[note.id] = tempfile
         util.set_note_id(note.id)
         vim.command('autocmd BufWrite <buffer> call PaperworkNoteBufferWrite()')  # noqa
         vim.command('autocmd BufDelete <buffer> call PaperworkNoteBufferDelete()')  # noqa
@@ -60,10 +62,9 @@ class PaperworkBuffers:
         note.content = '\n'.join(vim.current.buffer[:])
         note.update(force=True)
 
-    # TODO (Nelo Wallus): Replace phyiscally file with tempfile
     def delete_note_buffer(self, note):
         """Autocmd hook to delete temporary file."""
-        os.remove(util.get_tempfilename(note.title))
+        self.tempfiles[note.id].close()
 
     def update_buffers(self):
         """Overwrite all opened note buffers with updated content from host."""
@@ -107,9 +108,3 @@ class PaperworkTab:
         except:
             self.create_note_window()
         self.pwbuffers.open_note_buffer(note)
-
-    # TODO (Nelo Wallus): Something that actually makes sense.
-    def create_note_window(self):
-        """Creates note window to display note buffer."""
-        vim.command('vsplit new')
-        vim.current.window = self.notewindow

@@ -1,10 +1,9 @@
 import vim
-import re
-import os
+import tempfile
 
 tab_var = 't:PaperworkTabId'
 note_var = 'b:PaperworkNoteId'
-tempfileprefix = 'vim-paperwork-{}'
+tempfileprefix = 'vim-paperwork-'
 
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_indent = vim.eval('g:PaperworkDefaultIndent')
@@ -66,10 +65,7 @@ def set_note_id(note_id):
     vim.command('let {} = {}'.format(note_var, note_id))
 
 
-def get_filepath(filename):
-    """Returns the path for the temporary file."""
-    return os.path.join(
-        os.path.abspath(os.sep),
-        'tmp',
-        tempfileprefix.format(
-            re.sub(' ', '\ ', filename)))
+def get_tempfile():
+    """Returns a temporary file."""
+    return tempfile.NamedTemporaryFile(
+        prefix=tempfileprefix)
