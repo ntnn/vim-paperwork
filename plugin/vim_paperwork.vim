@@ -58,6 +58,7 @@ endPython
 endfunction
 
 function! PaperworkFoldExpr()
+    let prevline = getline(v:lnum - 1)
     let line = getline(v:lnum)
 
     " exclude headers
@@ -67,20 +68,15 @@ function! PaperworkFoldExpr()
 
     " notebooks/tags
     if line =~ '^\w'
-        return "a1"
-    endif
-
-    " notes
-    if line =~ '^\ '
-        return '='
+        return '1>'
     endif
 
     " blanks
     if line =~ '^$'
         if prevline =~ '^+'
             return -1
-        else
-            return "s1"
         endif
+        return '<1'
     endif
+    return '1'
 endfunction
