@@ -28,6 +28,10 @@ if !exists('g:PaperworkUsePwHighlight')
     let g:PaperworkUsePwHighlight = 1
 endif
 
+if !exists('g:PaperworkDefaultNoteWindow')
+    let g:PaperworkDefaultNoteWindow = 'split'
+endif
+
 py sys.path.append(vim.eval('expand("<sfile>:h")'))
 py from vim_paperwork import PaperworkVim
 py pv = None

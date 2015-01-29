@@ -5,6 +5,14 @@ import util
 
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_notebook = vim.eval('g:PaperworkDefaultNotebook')
+default_note_window = vim.eval('g:PaperworkDefaultNoteWindow')
+
+note_window_cmds = {
+        'bottom': 'botright new',
+        'top': 'topleft new',
+        'right': 'vertical botright new',
+        'left': 'vertical topleft new'
+    }
 
 """
 This file holds the buffer and window logic.
@@ -103,8 +111,12 @@ class PaperworkTab:
 
     def open_note(self, note):
         """Enter-hook to open note under cursor."""
-        try:
-            vim.current.window = self.notewindow
-        except:
-            self.create_note_window()
+        if default_note_window in note_window_cmds:
+            vim.command(note_window_cmds[default_note_window])
+        else:
+            try:
+                vim.current.window = self.notewindow
+            except:
+                vim.command('vsplit new')
+                vim.current.window = self.notewindow
         self.pwbuffers.open_note_buffer(note)
