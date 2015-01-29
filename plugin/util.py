@@ -8,6 +8,8 @@ tempfileprefix = 'vim-paperwork-{}'
 
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_indent = vim.eval('g:PaperworkDefaultIndent')
+use_pw_folding = vim.eval('g:PaperworkUsePwFolding')
+use_pw_highlight = vim.eval('g:PaperworkUsePwHighlight')
 
 
 def set_scratch():
@@ -22,12 +24,15 @@ def set_scratch():
     vim.command('setl wfw')
 
     # Folding
-    vim.command('setl foldmethod=expr')
-    vim.command("setl foldexpr=PaperworkFoldExpr()")
-    vim.command('setl foldtext=getline(v:foldstart)')
-    vim.command('setl fillchars=fold:\ ')
-    vim.command('setl foldlevel=1')
-    vim.command('setl nospell')
+    if use_pw_folding:
+        vim.command('setl foldmethod=expr')
+        vim.command('setl foldexpr=PaperworkFoldExpr()')
+        vim.command('setl foldtext=getline(v:foldstart)')
+        vim.command('setl fillchars=fold:\ ')
+        vim.command('setl foldlevel=1')
+        vim.command('setl nospell')
+        if use_pw_highlight:
+            vim.command('hi Folded term=NONE cterm=NONE gui=NONE')
 
 
 def coll_to_list(coll):

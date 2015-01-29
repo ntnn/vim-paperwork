@@ -16,9 +16,16 @@ if !exists('g:PaperworkDefaultIndent')
     let g:PaperworkDefaultIndent = &expandtab ? repeat(' ', &shiftwidth) : '\t'
 endif
 
-
 if !exists('g:PaperworkDefaultNotebook')
     let g:PaperworkDefaultNotebook = 'All Notes'
+endif
+
+if !exists('g:PaperworkUsePwFolding')
+    let g:PaperworkUsePwFolding = 1
+endif
+
+if !exists('g:PaperworkUsePwHighlight')
+    let g:PaperworkUsePwHighlight = 1
 endif
 
 py sys.path.append(vim.eval('expand("<sfile>:h")'))
