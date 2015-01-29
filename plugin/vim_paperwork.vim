@@ -23,10 +23,12 @@ endif
 
 py sys.path.append(vim.eval('expand("<sfile>:h")'))
 py from vim_paperwork import PaperworkVim
-py pv = PaperworkVim()
+py pv = None
 
-function! Paperwork()
+function! PaperworkOpenSidebar()
 python << endPython
+if not pv:
+    pv = PaperworkVim()
 pv.open()
 endPython
 endfunction
@@ -82,5 +84,3 @@ function! PaperworkFoldExpr()
         endif
     endif
 endfunction
-
-nnoremap <silent> <leader>P :call Paperwork()<CR>
