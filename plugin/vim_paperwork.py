@@ -15,12 +15,20 @@ default_indent = vim.eval('g:PaperworkDefaultIndent')
 
 
 class PaperworkVim:
-    def __init__(self):
-        self.pw = models.Paperwork(user, passwd, host)
+    def __init__(self, paperwork):
+        self.pw = paperwork
         self.pw.download()
         self.pwbuffers = PaperworkBuffers(self.pw, version)
         self.tabs = {}
         self.currTabId = 0
+
+    @classmethod
+    def init(cls):
+        pw = models.Paperwork(user, passwd, host)
+        if self.pw.authenticated:
+            return cls(pw)
+        else:
+            print('User/password combination is not valid or host can not be reached.')
 
     def open(self):
         """Open a sidebar."""

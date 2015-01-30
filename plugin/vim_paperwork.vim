@@ -4,7 +4,7 @@ if !has('python')
 endif
 
 if !exists('g:PaperworkHost') || !exists('g:PaperworkUser') || !exists('g:PaperworkPassword')
-    echo 'Error: vim-paperwork requires host, user and password.'
+    echo 'Error: vim-paperwork requires host, username and password.'
     finish
 endif
 
@@ -39,7 +39,7 @@ py pv = None
 function! PaperworkOpenSidebar()
 python << endPython
 if not pv:
-    pv = PaperworkVim()
+    pv = PaperworkVim.init()
 pv.open()
 endPython
 endfunction
