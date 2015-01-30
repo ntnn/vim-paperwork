@@ -40,7 +40,8 @@ function! PaperworkOpenSidebar()
 python << endPython
 if not pv:
     pv = PaperworkVim.init()
-pv.open()
+else:
+    pv.open()
 endPython
 endfunction
 

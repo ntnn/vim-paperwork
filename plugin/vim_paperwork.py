@@ -25,7 +25,7 @@ class PaperworkVim:
     @classmethod
     def init(cls):
         pw = models.Paperwork(user, passwd, host)
-        if self.pw.authenticated:
+        if pw.authenticated:
             return cls(pw)
         else:
             print('User/password combination is not valid or host can not be reached.')
