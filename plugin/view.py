@@ -39,7 +39,6 @@ class PaperworkBuffers:
 
     def print_sidebar(self):
         """Replaces sidebar buffer with new assembled information."""
-        # the plusses are really just for the expression
         ret = ['+++ vim-paperwork v{} +++'.format(self.version),
                '', "+++ Notebooks +++"]
         for nb in self.pw.get_notebooks():
@@ -48,7 +47,7 @@ class PaperworkBuffers:
         for tag in self.pw.get_tags():
             ret.extend(util.coll_to_list(tag))
         self.sidebarbuffer[:] = ret
-        self.sidebarbuffer.name = 'vim-paperwork'
+        self.last_sidebarbuffer = ret
 
     def create_sidebar_buffer(self):
         """Creates sidebar buffer and initializes with correct settings."""
@@ -138,8 +137,8 @@ class PaperworkBuffers:
 
     def open_note_buffer(self, note):
         """Creates temporary file and opens it."""
-        tempfile = util.get_tempfile()
-        vim.command('edit {}'.format(tempfile.name))
+        tempfile = util.get_tempfile(note.title)
+        vim.command("edit {}".format(tempfile.name))
         vim.current.buffer[:] = note.content.splitlines()
         vim.command('write!')
         self.notebuffers[note.id] = vim.current.buffer

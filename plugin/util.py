@@ -16,11 +16,11 @@ use_pw_highlight = vim.eval('g:PaperworkUsePwHighlight')
 def set_scratch():
     """Configures the current window to be a scratch window."""
     # Scratch buffer
-    vim.command('setl buftype=nofile')
+    # vim.command('setl buftype=nofile')
     # Not selectable
     vim.command('setl bufhidden=hide')
     # ???
-    vim.command('setl noswapfile')
+    # vim.command('setl noswapfile')
     # Fixed width
     vim.command('setl wfw')
 
@@ -75,3 +75,13 @@ def get_tempfile(suffix=''):
     return tempfile.NamedTemporaryFile(
         prefix=tempfileprefix,
         suffix=suffix)
+
+
+def parse_title(title):
+    """Returns the title of a sidebar entry."""
+    if title[0] in (' ', '\t'):
+        return title[len(default_indent):]
+    elif '-' in title:
+        return title[:title.rindex(' -')]
+    else:
+        return title
