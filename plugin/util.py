@@ -1,9 +1,11 @@
 import vim
 import tempfile
+import string
 
 tab_var = 't:PaperworkTabId'
 note_var = 'b:PaperworkNoteId'
 tempfileprefix = 'vim-paperwork-'
+valid_chars = "-_.() {}{}".format(string.ascii_letters, string.digits)
 
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_indent = vim.eval('g:PaperworkDefaultIndent')
@@ -65,7 +67,11 @@ def set_note_id(note_id):
     vim.command('let {} = {}'.format(note_var, note_id))
 
 
-def get_tempfile():
+def get_tempfile(suffix=''):
     """Returns a temporary file."""
+    if suffix != '':
+        suffix = ''.join(char for char in suffix if char in valid_chars)
+        suffix = '-' + suffix.replace(' ', '_')
     return tempfile.NamedTemporaryFile(
-        prefix=tempfileprefix)
+        prefix=tempfileprefix,
+        suffix=suffix)
