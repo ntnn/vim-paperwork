@@ -12,4 +12,4 @@ vim-paperwork automatically parses changes and pushes them to the remote host.
 
 #Screenshots
 
-![Example screenshot](https://github.com/ntnn/vim-paperwork/screenshots/sidebar_note.png)
+![example-screenshot](https://raw.githubusercontent.com/ntnn/vim-paperwork/master/screenshots/sidebar_note.png)
