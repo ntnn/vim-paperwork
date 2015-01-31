@@ -22,14 +22,6 @@ class PaperworkVim:
         self.tabs = {}
         self.currTabId = 0
 
-    @classmethod
-    def init(cls):
-        pw = models.Paperwork(user, passwd, host)
-        if pw.authenticated:
-            return cls(pw)
-        else:
-            print('User/password combination is not valid or host can not be reached.')
-
     def open(self):
         """Open a sidebar."""
         try:

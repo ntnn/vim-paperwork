@@ -39,7 +39,9 @@ py pv = None
 function! PaperworkOpenSidebar()
 python << endPython
 if not pv:
-    pv = PaperworkVim.init()
+    pv = PaperworkVim()
+if not pv.pw.authenticated:
+    print('User/password combination is not valid or host can not be reached.')
 else:
     pv.open()
 endPython
