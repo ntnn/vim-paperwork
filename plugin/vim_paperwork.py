@@ -15,8 +15,8 @@ default_indent = vim.eval('g:PaperworkDefaultIndent')
 
 
 class PaperworkVim:
-    def __init__(self, paperwork):
-        self.pw = paperwork
+    def __init__(self):
+        self.pw = models.Paperwork(user, passwd, host)
         self.pw.download()
         self.pwbuffers = PaperworkBuffers(self.pw, version)
         self.tabs = {}
@@ -35,6 +35,10 @@ class PaperworkVim:
         """Sync the local paperwork session with the remote host."""
         self.pw.update()
         self.pwbuffers.update_buffers()
+        self.pwbuffers.print_sidebar()
+
+    def parse_sidebar(self):
+        self.pwbuffers.parse_sidebar_buffer()
 
     def open_note(self):
         """Opens a note."""

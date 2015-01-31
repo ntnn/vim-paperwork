@@ -3,6 +3,7 @@ import os
 
 import util
 
+default_indent = vim.eval('g:PaperworkDefaultIndent')
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_notebook = vim.eval('g:PaperworkDefaultNotebook')
 default_note_window = vim.eval('g:PaperworkDefaultNoteWindow')
@@ -29,6 +30,8 @@ placing the right buffers in them.
 class PaperworkBuffers:
     def __init__(self, pw, version):
         self.sidebarbuffer = None
+        self.last_sidebarbuffer = None
+        self.last_deleted = []
         self.notebuffers = {}
         self.tempfiles = {}
         self.pw = pw
@@ -49,9 +52,89 @@ class PaperworkBuffers:
 
     def create_sidebar_buffer(self):
         """Creates sidebar buffer and initializes with correct settings."""
-        vim.command('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
+        bufferfile = util.get_tempfile('sidebar')
+        vim.command('edit {}'.format(bufferfile.name))
         self.sidebarbuffer = vim.current.buffer
         util.set_scratch()
+        vim.command('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
+        vim.command('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')
+        vim.command('autocmd BufWrite <buffer> call PaperworkSync()')
+
+    def parse_sidebar_buffer(self):
+        """Autocmd hook to apply changes."""
+        old_buffer = set(self.last_sidebarbuffer)
+        new_buffer = set(self.sidebarbuffer[:])
+        len_old_buffer = len(old_buffer)
+        len_new_buffer = len(new_buffer)
+
+        if len_new_buffer > len_old_buffer:
+            self.add_entries([entry for entry in self.sidebarbuffer[:] if entry not in old_buffer])
+        elif len_new_buffer < len_old_buffer:
+            self.remove_entries([entry for entry in old_buffer if entry not in new_buffer])
+        else:
+            self.change_entries([linenumber for linenumber,title in enumerate(self.sidebarbuffer[:]) if title not in old_buffer])
+        self.print_sidebar()
+
+    def add_entries(self, new_entries):
+        # Find notebook to add to
+        index = self.sidebarbuffer[:].index(new_entries[0]) - 1
+        while self.sidebarbuffer[index] == '' or self.sidebarbuffer[index][0] in (' ', '\t'):
+            index -= 1
+        notebook = self.pw.fuzzy_find_notebook(util.parse_title(self.sidebarbuffer[index]))
+
+        for entry in new_entries:
+            title = util.parse_title(entry)
+            if entry[0] not in (' ', '\t'):
+                # create notebook if no indentation is
+                # present
+                # TODO (Nelo Wallus): add tag creation
+                notebook = self.pw.add_notebook(entry)
+            else:
+                note = None
+                # Check for deleted items first
+                for deleted in self.last_deleted:
+                    if title == deleted.title:
+                        note = deleted
+                        self.last_deleted.remove(note)
+                        break
+                if not note:
+                    note = self.pw.find_note(title)
+                if note:
+                    note.move_to(notebook)
+                else:
+                    notebook.create_note(title)
+
+    def remove_entries(self, old_entries):
+        # Delete previously saved entries
+        for entry in self.last_deleted:
+            entry.delete()
+        self.last_deleted = []
+
+        for entry in old_entries:
+            title = util.parse_title(entry)
+            entry = self.pw.find_note(title)
+            if entry:
+                # Notes are saved in case of pasting into
+                # another notebook
+                entry.notebook.remove_note(entry)
+                self.last_deleted.append(entry)
+            else:
+                # Notebooks are deleted immediately
+                entry = self.pw.find_notebook(title)
+                if entry:
+                    entry.delete()
+                # TODO (Nelo Wallus): Add tag deletion
+
+    def change_entries(self, changed_lines):
+        for linenumber in changed_lines:
+            old_title = util.parse_title(self.last_sidebarbuffer[linenumber])
+            new_title = util.parse_title(self.sidebarbuffer[linenumber])
+            entry = self.pw.find_note(old_title)
+            if not entry:
+                entry = self.pw.find_notebook(old_title)
+            # TODO (Nelo Wallus): Add tag
+            entry.title = new_title
+            entry.update()
 
     def open_note_buffer(self, note):
         """Creates temporary file and opens it."""

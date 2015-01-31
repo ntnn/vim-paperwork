@@ -71,6 +71,12 @@ pv.close_note()
 endPython
 endfunction
 
+fu! PaperworkSidebarChanged()
+python << endPython
+pv.parse_sidebar()
+endPython
+endfu
+
 function! PaperworkFoldExpr()
     let prevline = getline(v:lnum - 1)
     let line = getline(v:lnum)
