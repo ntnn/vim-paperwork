@@ -25,6 +25,9 @@ passwd = vim.eval('g:PaperworkPassword')
 
 default_indent = vim.eval('g:PaperworkDefaultIndent')
 
+if vim.eval('g:PaperworkMultiThreading') == '1':
+    models.use_threading = True
+
 
 class PaperworkVim:
     def __init__(self):
