@@ -27,6 +27,7 @@ default_indent = vim.eval('g:PaperworkDefaultIndent')
 
 if vim.eval('g:PaperworkMultiThreading') == '1':
     models.use_threading = True
+    logger.info('Multithreading active')
 
 
 class PaperworkVim:
