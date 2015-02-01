@@ -13,15 +13,9 @@ use_pw_folding = vim.eval('g:PaperworkUsePwFolding')
 use_pw_highlight = vim.eval('g:PaperworkUsePwHighlight')
 
 
-def set_scratch():
+def set_folding():
     """Configures the current window to be a scratch window."""
-    # Scratch buffer
-    # vim.command('setl buftype=nofile')
-    # Not selectable
     vim.command('setl bufhidden=hide')
-    # ???
-    # vim.command('setl noswapfile')
-    # Fixed width
     vim.command('setl wfw')
 
     # Folding

@@ -1,5 +1,4 @@
 import vim
-import os
 
 import util
 
@@ -9,10 +8,10 @@ default_notebook = vim.eval('g:PaperworkDefaultNotebook')
 default_note_window = vim.eval('g:PaperworkDefaultNoteWindow')
 
 note_window_cmds = {
-        'bottom': 'botright new',
-        'top': 'topleft new',
-        'right': 'vertical botright new',
-        'left': 'vertical topleft new'
+    'bottom': 'botright new',
+    'top': 'topleft new',
+    'right': 'vertical botright new',
+    'left': 'vertical topleft new'
     }
 
 """
@@ -54,9 +53,9 @@ class PaperworkBuffers:
         bufferfile = util.get_tempfile('sidebar')
         vim.command('edit {}'.format(bufferfile.name))
         self.sidebarbuffer = vim.current.buffer
-        util.set_scratch()
+        util.set_folding()
         vim.command('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
-        vim.command('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')
+        vim.command('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')  # noqa
         vim.command('autocmd BufWrite <buffer> call PaperworkSync()')
 
     def parse_sidebar_buffer(self):
@@ -67,27 +66,41 @@ class PaperworkBuffers:
         len_new_buffer = len(new_buffer)
 
         if len_new_buffer > len_old_buffer:
-            self.add_entries([entry for entry in self.sidebarbuffer[:] if entry not in old_buffer])
+            self.add_entries(
+                [entry
+                 for entry in self.sidebarbuffer[:]
+                 if entry not in old_buffer])
         elif len_new_buffer < len_old_buffer:
-            self.remove_entries([entry for entry in old_buffer if entry not in new_buffer])
+            self.remove_entries(
+                [entry
+                 for entry in old_buffer
+                 if entry not in new_buffer])
         else:
-            self.change_entries([linenumber for linenumber,title in enumerate(self.sidebarbuffer[:]) if title not in old_buffer])
+            self.change_entries(
+                [linenumber
+                 for linenumber, title in enumerate(self.sidebarbuffer[:])
+                 if title not in old_buffer])
         self.print_sidebar()
 
     def add_entries(self, new_entries):
         # Find notebook to add to
         index = self.sidebarbuffer[:].index(new_entries[0]) - 1
-        while self.sidebarbuffer[index] == '' or self.sidebarbuffer[index][0] in (' ', '\t'):
+        print('finding notebook')
+        while (self.sidebarbuffer[index] == '' or
+               self.sidebarbuffer[index][0] in (' ', '\t')):
             index -= 1
-        notebook = self.pw.fuzzy_find_notebook(util.parse_title(self.sidebarbuffer[index]))
+        notebook = self.pw.find_notebook(
+            util.parse_title(
+                self.sidebarbuffer[index]))
 
+        print('finding entry')
         for entry in new_entries:
             title = util.parse_title(entry)
             if entry[0] not in (' ', '\t'):
                 # create notebook if no indentation is
                 # present
                 # TODO (Nelo Wallus): add tag creation
-                notebook = self.pw.add_notebook(entry)
+                notebook = self.pw.create_notebook(entry)
             else:
                 note = None
                 # Check for deleted items first
@@ -115,7 +128,7 @@ class PaperworkBuffers:
             if entry:
                 # Notes are saved in case of pasting into
                 # another notebook
-                entry.notebook.remove_note(entry)
+                del(entry.notebook.notes[entry.id])
                 self.last_deleted.append(entry)
             else:
                 # Notebooks are deleted immediately

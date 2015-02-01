@@ -44,7 +44,7 @@ class PaperworkVim:
         """Opens a note."""
         line = vim.current.line
         if line[0] in default_indent:
-            note = self.pw.find_note(vim.current.line[len(default_indent):])
+            note = self.pw.find_note(util.parse_title(line))
             self.tabs[util.get_tab_id()].open_note(note)
 
     def write_note(self):
