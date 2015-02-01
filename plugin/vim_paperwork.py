@@ -4,6 +4,18 @@ from view import *
 from util import *
 
 import vim
+import logging
+
+if vim.eval('g:PaperworkDebug') == '1':
+    # TODO (Nelo Wallus): Change to
+    # '$HOME/vim-paperwork.log'
+    handler = logging.FileHandler('paperwork.log')
+    handler.formatter = logging.Formatter(
+        '%(asctime)s [%(levelname)-5s @ '
+        '%(filename)-10s:%(funcName)-15s:%(lineno)-4s] %(process)-6s - %(message)s')
+    logging.root.addHandler(handler)
+    logging.root.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 version = "0.1a1"
 
@@ -21,9 +33,11 @@ class PaperworkVim:
         self.pwbuffers = PaperworkBuffers(self.pw, version)
         self.tabs = {}
         self.currTabId = 0
+        logger.info('Initialized PaperworkVim')
 
     def open(self):
         """Open a sidebar."""
+        logger.info('Opening Sidebar')
         try:
             self.tabs[util.get_tab_id()].open_sidebar()
         except:
@@ -33,26 +47,33 @@ class PaperworkVim:
 
     def sync(self):
         """Sync the local paperwork session with the remote host."""
+        logger.info('Start syncing with remote host')
         self.pw.update()
+        logger.info('Finished syncing, updating buffers')
         self.pwbuffers.update_buffers()
         self.pwbuffers.print_sidebar()
 
     def parse_sidebar(self):
+        logger.info('Parsing sidebar')
         self.pwbuffers.parse_sidebar_buffer()
 
     def open_note(self):
         """Opens a note."""
         line = vim.current.line
+        logger.info('Searching note "{}"'.format(line))
         if line[0] in default_indent:
             note = self.pw.find_note(util.parse_title(line))
+            logger.info('Found note {}'.format(note))
             self.tabs[util.get_tab_id()].open_note(note)
 
     def write_note(self):
         """Autocmd hook to update a note."""
         note = self.pw.find_note(util.get_note_id())
+        logger.info('Writing note {}'.format(note))
         self.pwbuffers.write_note_buffer(note)
 
     def close_note(self):
         """Autocmd hook to delete the temporary file."""
         note = self.pw.find_note(util.get_note_id())
+        logger.info('Closing note {}'.format(note))
         self.pwbuffers.delete_note_buffer(note)

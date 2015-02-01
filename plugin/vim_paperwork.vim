@@ -32,6 +32,10 @@ if !exists('g:PaperworkDefaultNoteWindow')
     let g:PaperworkDefaultNoteWindow = 'split'
 endif
 
+if !exists('g:PaperworkDebug')
+    let g:PaperworkDebug = 0
+endif
+
 py sys.path.append(vim.eval('expand("<sfile>:h")'))
 py from vim_paperwork import PaperworkVim
 py pv = None

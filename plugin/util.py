@@ -1,6 +1,8 @@
 import vim
 import tempfile
 import string
+import logging
+logger = logging.getLogger(__name__)
 
 tab_var = 't:PaperworkTabId'
 note_var = 'b:PaperworkNoteId'
@@ -15,6 +17,7 @@ use_pw_highlight = vim.eval('g:PaperworkUsePwHighlight')
 
 def set_folding():
     """Configures the current window to be a scratch window."""
+    logger.info('Setting sidebar options')
     vim.command('setl bufhidden=hide')
     vim.command('setl wfw')
 
@@ -43,26 +46,32 @@ def coll_to_list(coll):
 
 def get_tab_id():
     """Returns the PaperworkTabId of the current tab."""
+    logger.info('Getting tab id')
     return int(vim.eval(tab_var))
 
 
 def set_tab_id(tab_id):
     """Sets the PaperworkTabId of the current tab."""
+    logger.info('Setting tab id')
     vim.command('let {} = {}'.format(tab_var, tab_id))
 
 
 def get_note_id():
     """Returns the PaperworkNoteId of the current note."""
-    return vim.eval(note_var)
+    note_id = vim.eval(note_var)
+    logger.info('Getting note id {}'.format(note_id))
+    return int(note_id)
 
 
 def set_note_id(note_id):
     """Sets the PaperworkNoteId of the current note."""
+    logger.info('Setting note id {}'.format(note_id))
     vim.command('let {} = {}'.format(note_var, note_id))
 
 
 def get_tempfile(suffix=''):
     """Returns a temporary file."""
+    logger.info('Creating tempfile')
     if suffix != '':
         suffix = ''.join(char for char in suffix if char in valid_chars)
         suffix = '-' + suffix.replace(' ', '_')
@@ -73,6 +82,7 @@ def get_tempfile(suffix=''):
 
 def parse_title(title):
     """Returns the title of a sidebar entry."""
+    logger.info('Parsing title {}'.format(title))
     if title[0] in (' ', '\t'):
         return title[len(default_indent):]
     elif '-' in title:
