@@ -10,8 +10,15 @@ the one opening the sidebar.
 
 #Install
 Install this plugin with your preferred plugin-manager.  
-`paperwork.py` is required, install it either through `pip install paperworks` or clone the [github repo](https://github.com/ntnn/paperwork.py) and install it with setuptools.  
+`paperwork.py` is required, install it either through `pip install paperworks` or
+clone the [github repo](https://github.com/ntnn/paperwork.py) and install it with setuptools.  
 
+Define the following variables:  
+```viml
+let g:PaperworkHost = host
+let g:PaperworkUser = user
+let g:PaperworkPassword = password
+```
 
 #Usage
 To add notebooks and notes the desired title can be inserted.
@@ -25,7 +32,7 @@ Editing (`:edit` and equivalents) in the sidebar-buffer syncs the local and remo
 Writing a note forces an update to the remote host, while edit only rereads the temporary file.  
 To force an update of a note you need to sync through the sidebar buffer (or via shortcut).
 
-Bind 'PaperworkOpenSidebar()' to open the sidebar:  
+Bind `PaperworkOpenSidebar()` to open the sidebar:  
 `nnoremap <silent> <leader>P :call PaperworkOpenSidebar()<CR>`
 
 vim-paperwork downloads information from remote after the first call, so e.g. deactivating until call with vim-plug is not necessary.
