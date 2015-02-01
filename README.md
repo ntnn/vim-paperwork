@@ -5,7 +5,7 @@
 vim-paperwork allows you to create, edit and delete notes from vim.  
 Vim folds are used to display notebooks, thus default and personal keybindings can be used to navigate the sidebar.
 
-The final aim of this plugin is to provide a seamless interface to the users notes, while not needing many keybindings aside from
+The final aim of this plugin is to provide a seamless interface to the users notes, while not needing any keybindings aside from
 the one opening the sidebar.
 
 #Install
