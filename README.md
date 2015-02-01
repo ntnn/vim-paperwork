@@ -33,8 +33,9 @@ But this also means that the first start can take a few seconds, depending on th
 
 #Screenshot
 
-With paperwork default settings:  
-![example-screenshot](https://raw.githubusercontent.com/ntnn/vim-paperwork/master/screenshots/sidebar_note.png)
+With paperwork default settings, link to asciinema.org recording:  
+[![example-screenshot](https://raw.githubusercontent.com/ntnn/vim-paperwork/master/screenshots/example_screenshot.png)](https://asciinema.org/a/15958)
+
 
 #I found a bug/issue!
 If you encountered a problem, please put this into your vimrc and try to replicate it:  
