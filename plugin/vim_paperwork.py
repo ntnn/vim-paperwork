@@ -1,18 +1,18 @@
 from paperworks import models
 
-from view import *
-from util import *
+from view import *  # noqa
+from util import *  # noqa
 
 import vim
 import logging
 
 if vim.eval('g:PaperworkDebug') == '1':
-    # TODO (Nelo Wallus): Change to
-    # '$HOME/vim-paperwork.log'
-    handler = logging.FileHandler('paperwork.log')
+    handler = logging.FileHandler(
+        'vim-paperwork.log', mode='w')
     handler.formatter = logging.Formatter(
         '%(asctime)s [%(levelname)-5s @ '
-        '%(filename)-10s:%(funcName)-15s:%(lineno)-4s] %(process)-6s - %(message)s')
+        '%(filename)-10s:%(funcName)-15s:%(lineno)-4s] '
+        '%(process)-6s - %(message)s')
     logging.root.addHandler(handler)
     logging.root.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
@@ -60,17 +60,24 @@ class PaperworkVim:
     def open_note(self):
         """Opens a note."""
         line = vim.current.line
-        logger.info('Searching note "{}"'.format(line))
         if line[0] in default_indent:
+            logger.info('Searching note "{}"'.format(line))
             note = self.pw.find_note(util.parse_title(line))
-            logger.info('Found note {}'.format(note))
-            self.tabs[util.get_tab_id()].open_note(note)
+            if note:
+                logger.info('Found note {}'.format(note))
+                self.tabs[util.get_tab_id()].open_note(note)
+            else:
+                logger.error('No note found'.format(line))
 
     def write_note(self):
         """Autocmd hook to update a note."""
         note = self.pw.find_note(util.get_note_id())
-        logger.info('Writing note {}'.format(note))
-        self.pwbuffers.write_note_buffer(note)
+        if note:
+            # logger.info('Writing note {}'.format(note))
+            logger.info('Writing note {}'.format(note))
+            self.pwbuffers.write_note_buffer(note)
+        else:
+            logger.error('Found no note for {}'.format(util.get_note_id()))
 
     def close_note(self):
         """Autocmd hook to delete the temporary file."""
