@@ -1,5 +1,5 @@
 #vim-paperwork
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ntnn/vim-paperwork/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ntnn/vim-paperwork/?branch=master)  
 [paperwork](https://github.com/twostairs/paperwork) is 'an open source note-taking and archiving tool'.  
 
 vim-paperwork allows you to create, edit and delete notes from vim.  
