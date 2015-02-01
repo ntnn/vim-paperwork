@@ -8,6 +8,9 @@ default_width = vim.eval('g:PaperworkDefaultWidth')
 default_notebook = vim.eval('g:PaperworkDefaultNotebook')
 default_note_window = vim.eval('g:PaperworkDefaultNoteWindow')
 
+use_pw_folding = True if vim.eval('g:PaperworkUsePwFolding') == '1' else False
+use_pw_highlight = True if vim.eval('g:PaperworkUsePwHighlight') == '1' else False
+
 note_window_cmds = {
     'bottom': 'botright new',
     'top': 'topleft new',
@@ -57,7 +60,12 @@ class PaperworkBuffers:
         bufferfile = util.get_tempfile('sidebar')
         vim.command('edit {}'.format(bufferfile.name))
         self.sidebarbuffer = vim.current.buffer
-        util.set_folding()
+        vim.command('setl bufhidden=hide')
+        vim.command('setl hidden')
+        vim.command('setl wfw')
+        vim.command('setl timeoutlen=50')
+        if use_pw_folding:
+            util.set_folding(use_pw_highlight)
         vim.command('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
         vim.command('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')  # noqa
         vim.command('autocmd BufWrite <buffer> call PaperworkSync()')
@@ -155,7 +163,7 @@ class PaperworkBuffers:
                 entry = self.pw.find_notebook(title)
                 if entry:
                     logger.info('Found notebook {}, deleting'.format(entry))
-                    entry.delete()
+                    self.pw.delete_notebook(entry)
                 else:
                     logger.info('Entry not found: {}'.format(entry))
                 # TODO (Nelo Wallus): Add tag deletion

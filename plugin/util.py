@@ -11,26 +11,19 @@ valid_chars = "-_.() {}{}".format(string.ascii_letters, string.digits)
 
 default_width = vim.eval('g:PaperworkDefaultWidth')
 default_indent = vim.eval('g:PaperworkDefaultIndent')
-use_pw_folding = vim.eval('g:PaperworkUsePwFolding')
-use_pw_highlight = vim.eval('g:PaperworkUsePwHighlight')
 
 
-def set_folding():
+def set_folding(highlight):
     """Configures the current window to be a scratch window."""
-    logger.info('Setting sidebar options')
-    vim.command('setl bufhidden=hide')
-    vim.command('setl wfw')
-
-    # Folding
-    if use_pw_folding:
-        vim.command('setl foldmethod=expr')
-        vim.command('setl foldexpr=PaperworkFoldExpr()')
-        vim.command('setl foldtext=getline(v:foldstart)')
-        vim.command('setl fillchars=fold:\ ')
-        vim.command('setl foldlevel=1')
-        vim.command('setl nospell')
-        if use_pw_highlight:
-            vim.command('hi Folded term=NONE cterm=NONE gui=NONE')
+    logger.info('Setting sidebar folding')
+    vim.command('setl foldmethod=expr')
+    vim.command('setl foldexpr=PaperworkFoldExpr()')
+    vim.command('setl foldtext=getline(v:foldstart)')
+    vim.command('setl fillchars=fold:\ ')
+    vim.command('setl foldlevel=1')
+    vim.command('setl nospell')
+    if highlight:
+        vim.command('hi Folded term=NONE cterm=NONE gui=NONE')
 
 
 def coll_to_list(coll):
