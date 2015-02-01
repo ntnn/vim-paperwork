@@ -38,6 +38,10 @@ Bind `PaperworkOpenSidebar()` to open the sidebar:
 vim-paperwork downloads information from remote after the first call, so e.g. deactivating until call with vim-plug is not necessary.
 But this also means that the first start can take a few seconds, depending on the amount of notes and your connection.
 
+Multithreading can be activated with `let g:PaperworkMultiThreading = 1`. But this can lead to undesired behaviour such as deleted notes or notebooks
+showing up. On the other hand forced writes and syncs should be much faster.  
+However the initial startup time won't decrease, since vim-paperwork does need the complete information at startup.
+
 #Screenshot
 
 With paperwork default settings, link to asciinema.org recording:  
