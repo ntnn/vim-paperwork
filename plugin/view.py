@@ -176,17 +176,21 @@ class PaperworkBuffers:
     def open_note_buffer(self, note):
         """Creates temporary file and opens it."""
         logger.info('Opening notebuffer for {}'.format(note))
-        tempfile = util.get_tempfile(note.title)
-        logger.info('Created tempfile {}'.format(tempfile.name))
-        vim.command("edit {}".format(tempfile.name))
-        vim.current.buffer[:] = note.content.splitlines()
-        vim.command('write!')
-        self.notebuffers[note.id] = vim.current.buffer
-        self.tempfiles[note.id] = tempfile
-        util.set_note_id(note.id)
-        vim.command('autocmd BufWrite <buffer> call PaperworkNoteBufferWrite()')  # noqa
-        vim.command('autocmd BufDelete <buffer> call PaperworkNoteBufferDelete()')  # noqa
-        logger.info('Opened notebuffer')
+        if note.id in self.notebuffers:
+            logger.info('Notebuffer exists, switching')
+            vim.current.buffer = self.notebuffers[note.id]
+        else:
+            tempfile = util.get_tempfile(note.title)
+            logger.info('Created tempfile {}'.format(tempfile.name))
+            vim.command('edit {}'.format(tempfile.name))
+            vim.current.buffer[:] = note.content.splitlines()
+            vim.command('write!')
+            self.notebuffers[note.id] = vim.current.buffer
+            self.tempfiles[note.id] = tempfile
+            util.set_note_id(note.id)
+            vim.command('autocmd BufWrite <buffer> call PaperworkNoteBufferWrite()')  # noqa
+            vim.command('autocmd BufDelete <buffer> call PaperworkNoteBufferDelete()')  # noqa
+            logger.info('Opened notebuffer')
 
     def write_note_buffer(self, note):
         """Autocmd hook to write current buffer to note and update on host."""
