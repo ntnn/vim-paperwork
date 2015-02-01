@@ -8,6 +8,11 @@ Vim folds are used to display notebooks, thus default and personal keybindings c
 The final aim of this plugin is to provide a seamless interface to the users notes, while not needing many keybindings aside from
 the one opening the sidebar.
 
+#Install
+Install this plugin with your preferred plugin-manager.  
+`paperwork.py` is required, install it either through `pip install paperworks` or clone the [github repo](https://github.com/ntnn/paperwork.py) and install it with setuptools.  
+
+
 #Usage
 To add notebooks and notes the desired title can be inserted.
 Titles can be directly edited.
@@ -30,3 +35,9 @@ But this also means that the first start can take a few seconds, depending on th
 
 With paperwork default settings:  
 ![example-screenshot](https://raw.githubusercontent.com/ntnn/vim-paperwork/master/screenshots/sidebar_note.png)
+
+#I found a bug/issue!
+If you encountered a problem, please put this into your vimrc and try to replicate it:  
+`let g:PaperworkDebug = 1`  
+This creates a log file in the directory in which you are starting Vim. Try to replicate the problem and file an issue here on github with the content of the log file.
+Just don't forget to disable the line afterwards, otherwise you'll have dozens of log files all over your system.
