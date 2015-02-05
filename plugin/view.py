@@ -98,6 +98,10 @@ class PaperworkBuffers:
         self.print_sidebar()
 
     def add_entries(self, new_entries):
+        """Parses new entries to the paperwork instance.
+
+        :type new_entries: list
+        """
         logger.info('Parsing new entries to paperwork')
         # Find notebook to add to
         index = self.sidebarbuffer[:].index(new_entries[0]) - 1
@@ -140,6 +144,10 @@ class PaperworkBuffers:
                     notebook.create_note(title)
 
     def remove_entries(self, old_entries):
+        """Removed old entries from the paperwork instance.
+
+        :type old_entries: list
+        """
         logger.info('Parsing old entries to remove')
         # Delete previously saved entries
         logger.info('Deleting previous deleted entries')
@@ -169,6 +177,10 @@ class PaperworkBuffers:
                 # TODO (Nelo Wallus): Add tag deletion
 
     def change_entries(self, changed_lines):
+        """Apply changes in titles in paperwork instance.
+
+        :type changed_lines: list
+        """
         logger.info('Parsing changed entries')
         for linenumber in changed_lines:
             old_title = util.parse_title(self.last_sidebarbuffer[linenumber])
@@ -182,7 +194,10 @@ class PaperworkBuffers:
             entry.update()
 
     def open_note_buffer(self, note):
-        """Creates temporary file and opens it."""
+        """Creates temporary file and opens it.
+
+        :type note: Note
+        """
         logger.info('Opening notebuffer for {}'.format(note))
         if note.id in self.notebuffers:
             logger.info('Notebuffer exists, switching')
@@ -201,14 +216,20 @@ class PaperworkBuffers:
             logger.info('Opened notebuffer')
 
     def write_note_buffer(self, note):
-        """Autocmd hook to write current buffer to note and update on host."""
+        """Autocmd hook to write current buffer to note and update on host.
+
+        :type note: Note
+        """
         logger.info('Writing buffer to note {}'.format(note))
         note.content = '\n'.join(vim.current.buffer[:])
         note.update(force=True)
         logger.info('Wrote buffer')
 
     def delete_note_buffer(self, note):
-        """Autocmd hook to delete temporary file."""
+        """Autocmd hook to delete temporary file.
+
+        :type note: Note
+        """
         logger.info('Closing buffer for note {}'.format(note))
         self.tempfiles[note.id].close()
 

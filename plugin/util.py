@@ -14,7 +14,10 @@ default_indent = vim.eval('g:PaperworkDefaultIndent')
 
 
 def set_folding(highlight):
-    """Configures the current window to be a scratch window."""
+    """Configures the current window to be a scratch window.
+
+    :type highlight: bool
+    """
     logger.info('Setting sidebar folding')
     vim.command('setl foldmethod=expr')
     vim.command('setl foldexpr=PaperworkFoldExpr()')
@@ -27,7 +30,11 @@ def set_folding(highlight):
 
 
 def coll_to_list(coll):
-    """Turns the collection into a list."""
+    """Turns the collection into a list.
+
+    :type coll: list of Note or Tag
+    :rtype: list
+    """
     ret = []
     note_s = 'Notes' if len(coll.notes) != 1 else 'Note'
     ret.append('{} - {} {}'.format(coll.title, len(coll.notes), note_s))
@@ -38,32 +45,48 @@ def coll_to_list(coll):
 
 
 def get_tab_id():
-    """Returns the PaperworkTabId of the current tab."""
+    """Returns the PaperworkTabId of the current tab.
+
+    :rtype: int
+    """
     logger.info('Getting tab id')
     return int(vim.eval(tab_var))
 
 
 def set_tab_id(tab_id):
-    """Sets the PaperworkTabId of the current tab."""
+    """Sets the PaperworkTabId of the current tab.
+
+    :type tab_id: int or str
+    """
     logger.info('Setting tab id')
     vim.command('let {} = {}'.format(tab_var, tab_id))
 
 
 def get_note_id():
-    """Returns the PaperworkNoteId of the current note."""
+    """Returns the PaperworkNoteId of the current note.
+
+    :rtype: int
+    """
     note_id = vim.eval(note_var)
     logger.info('Getting note id {}'.format(note_id))
     return int(note_id)
 
 
 def set_note_id(note_id):
-    """Sets the PaperworkNoteId of the current note."""
+    """Sets the PaperworkNoteId of the current note.
+
+    :type note_id: int
+    """
     logger.info('Setting note id {}'.format(note_id))
     vim.command('let {} = {}'.format(note_var, note_id))
 
 
 def get_tempfile(suffix=''):
-    """Returns a temporary file."""
+    """Returns a temporary file.
+
+    :type suffix: str
+    :rtype: NamedTemporaryFile
+    """
     logger.info('Creating tempfile')
     if suffix != '':
         suffix = ''.join(char for char in suffix if char in valid_chars)
@@ -74,7 +97,11 @@ def get_tempfile(suffix=''):
 
 
 def parse_title(title):
-    """Returns the title of a sidebar entry."""
+    """Returns the title of a sidebar entry.
+
+    :type title: str
+    :rtype: str
+    """
     logger.info('Parsing title {}'.format(title))
     if title[0] in (' ', '\t'):
         return title[len(default_indent):]
