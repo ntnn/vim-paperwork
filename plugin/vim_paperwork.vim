@@ -3,8 +3,8 @@ if !has('python')
     finish
 endif
 
-if !exists('g:PaperworkHost') || !exists('g:PaperworkUser') || !exists('g:PaperworkPassword')
-    echo 'Error: vim-paperwork requires host, username and password.'
+if !exists('g:PaperworkHost')
+    echo 'Error: vim-paperwork requires host.'
     finish
 endif
 

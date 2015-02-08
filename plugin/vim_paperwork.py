@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 version = "0.1a1"
 
 host = vim.eval('g:PaperworkHost')
-user = vim.eval('g:PaperworkUser')
-passwd = vim.eval('g:PaperworkPassword')
 
 default_indent = vim.eval('g:PaperworkDefaultIndent')
 
@@ -32,7 +30,7 @@ if vim.eval('g:PaperworkMultiThreading') == '1':
 
 class PaperworkVim:
     def __init__(self):
-        self.pw = models.Paperwork(user, passwd, host)
+        self.pw = models.Paperwork(host)
         self.pw.download()
         self.pwbuffers = PaperworkBuffers(self.pw, version)
         self.tabs = {}
