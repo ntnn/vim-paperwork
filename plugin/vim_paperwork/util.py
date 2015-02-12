@@ -36,7 +36,7 @@ def parse_settings():
         """
         return cmd("get(g:, '{}', {})").format(var, value)
     for setting in SETTINGS:
-        SETTINGS[setting] = get(SETTINGS[setting])
+        SETTINGS[setting] = get(setting, SETTINGS[setting])
 
 
 def coll_to_list(coll):
