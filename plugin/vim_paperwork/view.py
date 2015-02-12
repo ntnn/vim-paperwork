@@ -12,6 +12,7 @@ placing the right buffers in them.
 from .util import (coll_to_list, get_tempfile, parse_title,
                    set_folding, cmd, set_note_id, SETTINGS)
 import logging
+import vim
 
 LOGGER = logging.getLogger(__name__)
 
