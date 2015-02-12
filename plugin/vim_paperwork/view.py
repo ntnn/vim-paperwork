@@ -9,7 +9,7 @@ placing the right buffers in them.
 
 """
 
-from util import *
+from .util import *
 import logging
 
 LOGGER = logging.getLogger(__name__)

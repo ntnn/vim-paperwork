@@ -3,8 +3,8 @@ from paperworks import models
 import vim
 import logging
 
-from util import *
-from view import *
+from .util import *
+from .view import *
 
 if SETTINGS['PaperworkDebug'] == '1':
     handler = logging.FileHandler(
@@ -17,7 +17,7 @@ if SETTINGS['PaperworkDebug'] == '1':
     logging.root.setLevel(logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
-version = "0.1a1"
+__version__ = "0.1a1"
 
 if SETTINGS['PaperworkMultiThreading'] == '1':
     models.use_threading = True
@@ -35,7 +35,7 @@ class PaperworkVim:
         # PaperworkHost has no default value.
         self.pw = models.Paperwork(eval('g:PaperworkHost'))
         self.pw.download()
-        self.pwbuffers = PaperworkBuffers(self.pw, version)
+        self.pwbuffers = PaperworkBuffers(self.pw, __version__)
         self.tabs = {}
         self.currTabId = 0
         LOGGER.info('Initialized PaperworkVim')
