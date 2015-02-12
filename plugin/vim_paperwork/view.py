@@ -44,8 +44,8 @@ class PaperworkBuffers:
         LOGGER.info('Printing sidebar')
         ret = ['+++ vim-paperwork v{} +++'.format(self.version),
                '', "+++ Notebooks +++"]
-        for nb in self.pw.get_notebooks():
-            ret.extend(coll_to_list(nb))
+        for notebook in self.pw.get_notebooks():
+            ret.extend(coll_to_list(notebook))
         ret += ['+++ Tags +++']
         for tag in self.pw.get_tags():
             ret.extend(coll_to_list(tag))
@@ -59,8 +59,10 @@ class PaperworkBuffers:
         cmd('edit {}'.format(bufferfile.name))
         self.sidebarbuffer = vim.current.buffer
         set_folding()
-        cmd('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
-        cmd('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')  # noqa
+        cmd('nnoremap <silent> <buffer>'
+            ' <CR> :call PaperworkOpenNote()<CR>')
+        cmd('autocmd TextChanged,InsertLeave <buffer>'
+            ' call PaperworkSidebarChanged()')
         cmd('autocmd BufWrite <buffer> call PaperworkSync()')
         LOGGER.info('Created sidebarbuffer')
 
@@ -100,7 +102,8 @@ class PaperworkBuffers:
         index = self.sidebarbuffer[:].index(new_entries[0]) - 1
         LOGGER.info('Finding notebook')
         while (self.sidebarbuffer[index] == '' or
-               self.sidebarbuffer[index][0] in SETTINGS['PaperworkDefaultIndent']):
+               self.sidebarbuffer[index][0] in
+               SETTINGS['PaperworkDefaultIndent']):
             index -= 1
         LOGGER.info('Searching for notebook in paperwork')
         notebook = self.pw.find_notebook(
@@ -113,8 +116,6 @@ class PaperworkBuffers:
             title = parse_title(entry)
             if entry[0] not in SETTINGS['PaperworkDefaultIndent']:
                 LOGGER.info('Found notebook entry, creating notebook')
-                # create notebook if no indentation is present
-                # TODO (Nelo Wallus): add tag creation
                 notebook = self.pw.create_notebook(entry)
             else:
                 note = None
@@ -167,7 +168,6 @@ class PaperworkBuffers:
                     self.pw.delete_notebook(entry)
                 else:
                     LOGGER.info('Entry not found: {}'.format(entry))
-                # TODO (Nelo Wallus): Add tag deletion
 
     def change_entries(self, changed_lines):
         """Apply changes in titles in paperwork instance.
@@ -181,7 +181,6 @@ class PaperworkBuffers:
             entry = self.pw.find_note(old_title)
             if not entry:
                 entry = self.pw.find_notebook(old_title)
-            # TODO (Nelo Wallus): Add tag
             LOGGER.info('Changed {} title to {}'.format(entry, new_title))
             entry.title = new_title
             entry.update()

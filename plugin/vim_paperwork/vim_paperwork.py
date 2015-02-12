@@ -66,14 +66,14 @@ class PaperworkVim:
     def open_note(self):
         """Opens a note."""
         line = vim.current.line
-        if line[0] in default_indent:
+        if line[0] in SETTINGS['PaperworkDefaultIndent']:
             LOGGER.info('Searching note "{}"'.format(line))
             note = self.pw.find_note(parse_title(line))
             if note:
                 LOGGER.info('Found note {}'.format(note))
                 self.tabs[get_tab_id()].open_note(note)
             else:
-                LOGGER.error('No note found'.format(line))
+                LOGGER.error('No note found {}'.format(line))
 
     def write_note(self):
         """Autocmd hook to update a note."""
