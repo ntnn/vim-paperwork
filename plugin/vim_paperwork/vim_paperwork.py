@@ -3,8 +3,9 @@ from paperworks import models
 import vim
 import logging
 
-from .util import *
-from .view import *
+from .util import (get_tab_id, set_tab_id, SETTINGS, parse_title,
+                   get_note_id)
+from .view import PaperworkBuffers, PaperworkTab
 
 if SETTINGS['PaperworkDebug'] == '1':
     handler = logging.FileHandler(

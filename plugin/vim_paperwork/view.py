@@ -9,12 +9,13 @@ placing the right buffers in them.
 
 """
 
-from .util import *
+from .util import (coll_to_list, get_tempfile, parse_title,
+                   set_folding, cmd, set_note_id, SETTINGS)
 import logging
 
 LOGGER = logging.getLogger(__name__)
 
-NOTE_WINDOW_CMDS = {
+_NOTE_WINDOW_CMDS = {
     'bottom': 'botright new',
     'top': 'topleft new',
     'right': 'vertical botright new',
@@ -279,7 +280,7 @@ class PaperworkTab:
         LOGGER.info('Opening note window')
         default_note_window = SETTINGS['PaperworkDefaultNoteWindow']
         if default_note_window in NOTE_WINDOW_CMDS:
-            cmd(NOTE_WINDOW_CMDS[default_note_window])
+            cmd(_NOTE_WINDOW_CMDS[default_note_window])
         else:
             try:
                 vim.current.window = self.notewindow
