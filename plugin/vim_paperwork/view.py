@@ -280,7 +280,7 @@ class PaperworkTab:
         """Enter-hook to open note under cursor."""
         LOGGER.info('Opening note window')
         default_note_window = SETTINGS['PaperworkDefaultNoteWindow']
-        if default_note_window in NOTE_WINDOW_CMDS:
+        if default_note_window in _NOTE_WINDOW_CMDS:
             cmd(_NOTE_WINDOW_CMDS[default_note_window])
         else:
             try:
