@@ -6,7 +6,7 @@ import logging
 from util import *
 from view import *
 
-if eval('g:PaperworkDebug') == '1':
+if SETTINGS['PaperworkDebug'] == '1':
     handler = logging.FileHandler(
         'vim-paperwork.log', mode='w')
     handler.formatter = logging.Formatter(
@@ -19,13 +19,20 @@ LOGGER = logging.getLogger(__name__)
 
 version = "0.1a1"
 
-if eval('g:PaperworkMultiThreading') == '1':
+if SETTINGS['PaperworkMultiThreading'] == '1':
     models.use_threading = True
     LOGGER.info('Multi threading active')
 
 
 class PaperworkVim:
+    """Interface between vim and view-class.
+
+    Provides functions for autocommands and keybindings.
+    """
     def __init__(self):
+        """Initializes the interface class."""
+        # Not using the global SETTINGS here, since
+        # PaperworkHost has no default value.
         self.pw = models.Paperwork(eval('g:PaperworkHost'))
         self.pw.download()
         self.pwbuffers = PaperworkBuffers(self.pw, version)
@@ -52,6 +59,7 @@ class PaperworkVim:
         self.pwbuffers.print_sidebar()
 
     def parse_sidebar(self):
+        """Parses sidebar to paperwork."""
         LOGGER.info('Parsing sidebar')
         self.pwbuffers.parse_sidebar_buffer()
 

@@ -1,3 +1,14 @@
+"""
+This file holds the buffer and window logic.
+
+PaperworkBuffers holds all buffers and their referring methods -
+creating, deleting, updating.
+
+PaperworkTab holds only the methods for managing windows and
+placing the right buffers in them.
+
+"""
+
 from util import *
 import logging
 
@@ -10,20 +21,15 @@ NOTE_WINDOW_CMDS = {
     'left': 'vertical topleft new'
     }
 
-"""
-This file holds the buffer and window logic.
-
-PaperworkBuffers holds all buffers and their referring methods -
-creating, deleting, updating.
-
-PaperworkTab holds only the methods for managing windows and
-placing the right buffers in them.
-
-"""
-
 
 class PaperworkBuffers:
+    """Class representing the vim_paperwork buffers."""
     def __init__(self, pw, version):
+        """Initializes the class but no values.
+
+        :type pw: Paperwork
+        :type version: int
+        """
         self.sidebarbuffer = None
         self.last_sidebarbuffer = None
         self.last_deleted = []
@@ -232,7 +238,13 @@ class PaperworkBuffers:
 
 
 class PaperworkTab:
+    """Class representing vim tabs."""
     def __init__(self, pwbuffers):
+        """Initializes the class and the current vim tab.
+
+        :param PaperworkBuffers pwbuffers: Instance of PaperworkBuffers to fill
+            the windows with correct buffers.
+        """
         self.pwbuffers = pwbuffers
         self.sidebarwindow = None
         self.notebarwindow = None

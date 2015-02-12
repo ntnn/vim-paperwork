@@ -1,3 +1,4 @@
+"""Utility functions and default settings."""
 import vim
 import tempfile
 import string
@@ -26,7 +27,13 @@ SETTINGS = {
 
 
 def parse_settings():
+    """Sets default settings in consideration of the users settings."""
     def get(var, value):
+        """Returns the variable from vim or the default value.
+
+        :param str var: Variable to get from vim.
+        :param str value: Default value.
+        """
         return cmd("get(g:, '{}', {})").format(var, value)
     for setting in SETTINGS:
         SETTINGS[setting] = get(SETTINGS[setting])
@@ -157,22 +164,3 @@ def set_note_id(note_id):
     :type note_id: int
     """
     cmd('let {} = {}'.format(NOTE_VAR, note_id))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
