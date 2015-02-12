@@ -1,17 +1,9 @@
-import vim
-import util
+from util import *
 import logging
-logger = logging.getLogger(__name__)
 
-default_indent = vim.eval('g:PaperworkDefaultIndent')
-default_width = vim.eval('g:PaperworkDefaultWidth')
-default_notebook = vim.eval('g:PaperworkDefaultNotebook')
-default_note_window = vim.eval('g:PaperworkDefaultNoteWindow')
+LOGGER = logging.getLogger(__name__)
 
-use_pw_folding = True if vim.eval('g:PaperworkUsePwFolding') == '1' else False
-use_pw_highlight = True if vim.eval('g:PaperworkUsePwHighlight') == '1' else False
-
-note_window_cmds = {
+NOTE_WINDOW_CMDS = {
     'bottom': 'botright new',
     'top': 'topleft new',
     'right': 'vertical botright new',
@@ -39,41 +31,36 @@ class PaperworkBuffers:
         self.tempfiles = {}
         self.pw = pw
         self.version = version
-        logger.info('Initialized PaperworkBuffers')
+        LOGGER.info('Initialized PaperworkBuffers')
 
     def print_sidebar(self):
         """Replaces sidebar buffer with new assembled information."""
-        logger.info('Printing sidebar')
+        LOGGER.info('Printing sidebar')
         ret = ['+++ vim-paperwork v{} +++'.format(self.version),
                '', "+++ Notebooks +++"]
         for nb in self.pw.get_notebooks():
-            ret.extend(util.coll_to_list(nb))
+            ret.extend(coll_to_list(nb))
         ret += ['+++ Tags +++']
         for tag in self.pw.get_tags():
-            ret.extend(util.coll_to_list(tag))
+            ret.extend(coll_to_list(tag))
         self.sidebarbuffer[:] = ret
         self.last_sidebarbuffer = ret
 
     def create_sidebar_buffer(self):
         """Creates sidebar buffer and initializes with correct settings."""
-        logger.info('Creating sidebarbuffer')
-        bufferfile = util.get_tempfile('sidebar')
-        vim.command('edit {}'.format(bufferfile.name))
+        LOGGER.info('Creating sidebarbuffer')
+        bufferfile = get_tempfile('sidebar')
+        cmd('edit {}'.format(bufferfile.name))
         self.sidebarbuffer = vim.current.buffer
-        vim.command('setl bufhidden=hide')
-        vim.command('setl hidden')
-        vim.command('setl wfw')
-        vim.command('setl timeoutlen=50')
-        if use_pw_folding:
-            util.set_folding(use_pw_highlight)
-        vim.command('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
-        vim.command('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')  # noqa
-        vim.command('autocmd BufWrite <buffer> call PaperworkSync()')
-        logger.info('Created sidebarbuffer')
+        set_folding()
+        cmd('nnoremap <silent> <buffer> <CR> :call PaperworkOpenNote()<CR>')  # noqa
+        cmd('autocmd TextChanged,InsertLeave <buffer> call PaperworkSidebarChanged()')  # noqa
+        cmd('autocmd BufWrite <buffer> call PaperworkSync()')
+        LOGGER.info('Created sidebarbuffer')
 
     def parse_sidebar_buffer(self):
         """Autocmd hook to apply changes."""
-        logger.info('Parsing sidebarbuffer')
+        LOGGER.info('Parsing sidebarbuffer')
         old_buffer = set(self.last_sidebarbuffer)
         new_buffer = set(self.sidebarbuffer[:])
         len_old_buffer = len(old_buffer)
@@ -94,7 +81,7 @@ class PaperworkBuffers:
                 [linenumber
                  for linenumber, title in enumerate(self.sidebarbuffer[:])
                  if title not in old_buffer])
-        logger.info('Finished parsing sidebarbuffer, printing')
+        LOGGER.info('Finished parsing sidebarbuffer, printing')
         self.print_sidebar()
 
     def add_entries(self, new_entries):
@@ -102,24 +89,24 @@ class PaperworkBuffers:
 
         :type new_entries: list
         """
-        logger.info('Parsing new entries to paperwork')
+        LOGGER.info('Parsing new entries to paperwork')
         # Find notebook to add to
         index = self.sidebarbuffer[:].index(new_entries[0]) - 1
-        logger.info('Finding notebook')
+        LOGGER.info('Finding notebook')
         while (self.sidebarbuffer[index] == '' or
-               self.sidebarbuffer[index][0] in default_indent):
+               self.sidebarbuffer[index][0] in SETTINGS['PaperworkDefaultIndent']):
             index -= 1
-        logger.info('Searching for notebook in paperwork')
+        LOGGER.info('Searching for notebook in paperwork')
         notebook = self.pw.find_notebook(
-            util.parse_title(
+            parse_title(
                 self.sidebarbuffer[index]))
 
-        logger.info('Parsing entries')
+        LOGGER.info('Parsing entries')
         for entry in new_entries:
-            logger.info('Entry: {}'.format(entry))
-            title = util.parse_title(entry)
-            if entry[0] not in default_indent:
-                logger.info('Found notebook entry, creating notebook')
+            LOGGER.info('Entry: {}'.format(entry))
+            title = parse_title(entry)
+            if entry[0] not in SETTINGS['PaperworkDefaultIndent']:
+                LOGGER.info('Found notebook entry, creating notebook')
                 # create notebook if no indentation is present
                 # TODO (Nelo Wallus): add tag creation
                 notebook = self.pw.create_notebook(entry)
@@ -127,20 +114,20 @@ class PaperworkBuffers:
                 note = None
                 # Check for deleted items first
                 for deleted in self.last_deleted:
-                    logger.info('Searching deleted notes')
+                    LOGGER.info('Searching deleted notes')
                     if title == deleted.title:
                         note = deleted
                         self.last_deleted.remove(note)
                         break
                 if not note:
-                    logger.info('Finding note in paperwork')
+                    LOGGER.info('Finding note in paperwork')
                     note = self.pw.find_note(title)
                 if note:
-                    logger.info('Found existing note, moving {} to {}'.format(
+                    LOGGER.info('Found existing note, moving {} to {}'.format(
                         note, note.notebook))
                     note.move_to(notebook)
                 else:
-                    logger.info('New note, creating note in notebook')
+                    LOGGER.info('New note, creating note in notebook')
                     notebook.create_note(title)
 
     def remove_entries(self, old_entries):
@@ -148,19 +135,19 @@ class PaperworkBuffers:
 
         :type old_entries: list
         """
-        logger.info('Parsing old entries to remove')
+        LOGGER.info('Parsing old entries to remove')
         # Delete previously saved entries
-        logger.info('Deleting previous deleted entries')
+        LOGGER.info('Deleting previous deleted entries')
         for entry in self.last_deleted:
             entry.delete()
         self.last_deleted = []
 
         for entry in old_entries:
-            logger.info('Parsing entry {}'.format(entry))
-            title = util.parse_title(entry)
+            LOGGER.info('Parsing entry {}'.format(entry))
+            title = parse_title(entry)
             entry = self.pw.find_note(title)
             if entry:
-                logger.info('Found note {}, adding to last deleted'.format(
+                LOGGER.info('Found note {}, adding to last deleted'.format(
                     entry))
                 # Notes are saved in case of pasting into
                 # another notebook
@@ -170,10 +157,10 @@ class PaperworkBuffers:
                 # Notebooks are deleted immediately
                 entry = self.pw.find_notebook(title)
                 if entry:
-                    logger.info('Found notebook {}, deleting'.format(entry))
+                    LOGGER.info('Found notebook {}, deleting'.format(entry))
                     self.pw.delete_notebook(entry)
                 else:
-                    logger.info('Entry not found: {}'.format(entry))
+                    LOGGER.info('Entry not found: {}'.format(entry))
                 # TODO (Nelo Wallus): Add tag deletion
 
     def change_entries(self, changed_lines):
@@ -181,15 +168,15 @@ class PaperworkBuffers:
 
         :type changed_lines: list
         """
-        logger.info('Parsing changed entries')
+        LOGGER.info('Parsing changed entries')
         for linenumber in changed_lines:
-            old_title = util.parse_title(self.last_sidebarbuffer[linenumber])
-            new_title = util.parse_title(self.sidebarbuffer[linenumber])
+            old_title = parse_title(self.last_sidebarbuffer[linenumber])
+            new_title = parse_title(self.sidebarbuffer[linenumber])
             entry = self.pw.find_note(old_title)
             if not entry:
                 entry = self.pw.find_notebook(old_title)
             # TODO (Nelo Wallus): Add tag
-            logger.info('Changed {} title to {}'.format(entry, new_title))
+            LOGGER.info('Changed {} title to {}'.format(entry, new_title))
             entry.title = new_title
             entry.update()
 
@@ -198,50 +185,50 @@ class PaperworkBuffers:
 
         :type note: Note
         """
-        logger.info('Opening notebuffer for {}'.format(note))
+        LOGGER.info('Opening notebuffer for {}'.format(note))
         if note.id in self.notebuffers:
-            logger.info('Notebuffer exists, switching')
+            LOGGER.info('Notebuffer exists, switching')
             vim.current.buffer = self.notebuffers[note.id]
         else:
-            tempfile = util.get_tempfile(note.title)
-            logger.info('Created tempfile {}'.format(tempfile.name))
-            vim.command('edit {}'.format(tempfile.name))
+            tempfile = get_tempfile(note.title)
+            LOGGER.info('Created tempfile {}'.format(tempfile.name))
+            cmd('edit {}'.format(tempfile.name))
             vim.current.buffer[:] = note.content.splitlines()
-            vim.command('write!')
+            cmd('write!')
             self.notebuffers[note.id] = vim.current.buffer
             self.tempfiles[note.id] = tempfile
-            util.set_note_id(note.id)
-            vim.command('autocmd BufWrite <buffer> call PaperworkNoteBufferWrite()')  # noqa
-            vim.command('autocmd BufDelete <buffer> call PaperworkNoteBufferDelete()')  # noqa
-            logger.info('Opened notebuffer')
+            set_note_id(note.id)
+            cmd('autocmd BufWrite <buffer> call PaperworkNoteBufferWrite()')
+            cmd('autocmd BufDelete <buffer> call PaperworkNoteBufferDelete()')
+            LOGGER.info('Opened notebuffer')
 
     def write_note_buffer(self, note):
         """Autocmd hook to write current buffer to note and update on host.
 
         :type note: Note
         """
-        logger.info('Writing buffer to note {}'.format(note))
+        LOGGER.info('Writing buffer to note {}'.format(note))
         note.content = '\n'.join(vim.current.buffer[:])
         note.update(force=True)
-        logger.info('Wrote buffer')
+        LOGGER.info('Wrote buffer')
 
     def delete_note_buffer(self, note):
         """Autocmd hook to delete temporary file.
 
         :type note: Note
         """
-        logger.info('Closing buffer for note {}'.format(note))
+        LOGGER.info('Closing buffer for note {}'.format(note))
         self.tempfiles[note.id].close()
 
     def update_buffers(self):
         """Overwrite all opened note buffers with updated content from host."""
-        logger.info('Updating open buffers')
+        LOGGER.info('Updating open buffers')
         for note_id in self.notebuffers:
-            logger.info('Updating buffer for note with id {}'.format(note_id))
+            LOGGER.info('Updating buffer for note with id {}'.format(note_id))
             self.notebuffers[note_id][:] = self.pw.find_note(
                 note_id).content.splitlines()
         self.print_sidebar()
-        logger.info('Finished updating open buffers')
+        LOGGER.info('Finished updating open buffers')
 
 
 class PaperworkTab:
@@ -252,11 +239,11 @@ class PaperworkTab:
         self.current_notebook = None
         self.notewindow = None
         self.open_sidebar()
-        logger.info('Initialized PaperworkTab')
+        LOGGER.info('Initialized PaperworkTab')
 
     def open_sidebar(self):
         """Opens sidebar or creates a new one if not present."""
-        logger.info('Opening sidebar window')
+        LOGGER.info('Opening sidebar window')
         self.notewindow = vim.current.window
         try:
             vim.current.window = self.sidebarwindow
@@ -266,26 +253,27 @@ class PaperworkTab:
             self.pwbuffers.create_sidebar_buffer()
         else:
             vim.current.buffer = self.pwbuffers.sidebarbuffer
-        logger.info('Opened sidebar window, printing sidebar buffer')
+        LOGGER.info('Opened sidebar window, printing sidebar buffer')
         self.pwbuffers.print_sidebar()
 
     def create_sidebar_window(self):
         """Creates sidebar window."""
-        logger.info('Creating sidebar window')
-        vim.command('vertical topleft {}new'.format(default_width))
+        LOGGER.info('Creating sidebar window')
+        cmd('vertical topleft {}new'.format(SETTINGS['PaperworkDefaultWidth']))
         self.sidebarwindow = vim.current.window
-        logger.info('Created sidebar window')
+        LOGGER.info('Created sidebar window')
 
     def open_note(self, note):
         """Enter-hook to open note under cursor."""
-        logger.info('Opening note window')
-        if default_note_window in note_window_cmds:
-            vim.command(note_window_cmds[default_note_window])
+        LOGGER.info('Opening note window')
+        default_note_window = SETTINGS['PaperworkDefaultNoteWindow']
+        if default_note_window in NOTE_WINDOW_CMDS:
+            cmd(NOTE_WINDOW_CMDS[default_note_window])
         else:
             try:
                 vim.current.window = self.notewindow
             except:
-                vim.command('vsplit new')
+                cmd('vsplit new')
                 vim.current.window = self.notewindow
         self.pwbuffers.open_note_buffer(note)
-        logger.info('Opened note window')
+        LOGGER.info('Opened note window')

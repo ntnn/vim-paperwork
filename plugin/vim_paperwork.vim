@@ -4,44 +4,12 @@ if !has('python')
 endif
 
 if !exists('g:PaperworkHost')
-    echo 'Error: vim-paperwork requires host.'
+    echo 'Error: vim-paperwork requires g:PaperworkHost to be set.'
     finish
 endif
 
-if !exists('g:PaperworkDefaultWidth')
-    let g:PaperworkDefaultWidth = 50
-endif
-
-if !exists('g:PaperworkDefaultIndent')
-    let g:PaperworkDefaultIndent = &expandtab ? repeat(' ', &shiftwidth) : '\t'
-endif
-
-if !exists('g:PaperworkDefaultNotebook')
-    let g:PaperworkDefaultNotebook = 'All Notes'
-endif
-
-if !exists('g:PaperworkUsePwFolding')
-    let g:PaperworkUsePwFolding = 1
-endif
-
-if !exists('g:PaperworkUsePwHighlight')
-    let g:PaperworkUsePwHighlight = 1
-endif
-
-if !exists('g:PaperworkDefaultNoteWindow')
-    let g:PaperworkDefaultNoteWindow = 'split'
-endif
-
-if !exists('g:PaperworkDebug')
-    let g:PaperworkDebug = 0
-endif
-
-if !exists('g:PaperworkMultiThreading')
-    let g:PaperworkMultiThreading = 0
-endif
-
 py sys.path.append(vim.eval('expand("<sfile>:h")'))
-py from vim_paperwork import PaperworkVim
+py from vim_paperwork.vim_paperwork import PaperworkVim
 py pv = None
 
 function! PaperworkOpenSidebar()
