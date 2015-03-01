@@ -45,7 +45,7 @@ However the initial startup time won't decrease, since vim-paperwork does need t
 #Screenshot
 
 With paperwork default settings, link to asciinema.org recording:  
-[![example-screenshot](https://raw.githubusercontent.com/ntnn/vim-paperwork/master/screenshots/example_screenshot.png)](https://asciinema.org/a/15958)
+[![example-screenshot](https://cloud.githubusercontent.com/assets/10514301/6430545/f9274f58-c00e-11e4-9003-37a874766018.png)](https://asciinema.org/a/15958)
 
 
 #I found a bug/issue!
