@@ -4,7 +4,7 @@ import vim
 import logging
 
 from .util import (get_tab_id, set_tab_id, SETTINGS, parse_title,
-                   get_note_id)
+                   get_note_id, eval)
 from .view import PaperworkBuffers, PaperworkTab
 
 if SETTINGS['PaperworkDebug'] == '1':
