@@ -1,5 +1,4 @@
 #vim-paperwork
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ntnn/vim-paperwork/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ntnn/vim-paperwork/?branch=master)  
 [paperwork](https://github.com/twostairs/paperwork) is 'an open source note-taking and archiving tool'.  
 
 vim-paperwork allows you to create, edit and delete notes from vim.  
@@ -10,8 +9,7 @@ the one opening the sidebar.
 
 #Install
 Install this plugin with your preferred plugin-manager.  
-`paperwork.py` is required, install it either through `pip install paperworks` or
-clone the [github repo](https://github.com/ntnn/paperwork.py) and install it with setuptools.  
+`vim-paperwork` requires [webapi-vim](https://github.com/mattn/webapi-vim)
 
 Define the following variables:  
 ```viml
@@ -32,20 +30,15 @@ Editing (`:edit` and equivalents) in the sidebar-buffer syncs the local and remo
 Writing a note forces an update to the remote host, while edit only rereads the temporary file.  
 To force an update of a note you need to sync through the sidebar buffer (or via shortcut).
 
-Bind `PaperworkOpenSidebar()` to open the sidebar:  
-`nnoremap <silent> <leader>P :call PaperworkOpenSidebar()<CR>`
+TODO (Nelo Wallus): New open sidebar
 
 vim-paperwork downloads information from remote after the first call, so e.g. deactivating until call with vim-plug is not necessary.
 But this also means that the first start can take a few seconds, depending on the amount of notes and your connection.
 
-Multithreading can be activated with `let g:PaperworkMultiThreading = 1`. But this can lead to undesired behaviour such as deleted notes or notebooks
-showing up. On the other hand forced writes and syncs should be much faster.  
-However the initial startup time won't decrease, since vim-paperwork does need the complete information at startup.
-
 #Screenshot
 
 With paperwork default settings, link to asciinema.org recording:  
-[![example-screenshot](https://cloud.githubusercontent.com/assets/10514301/6430545/f9274f58-c00e-11e4-9003-37a874766018.png)](https://asciinema.org/a/15958)
+TODO (Nelo Wallus): New recording
 
 
 #I found a bug/issue!
