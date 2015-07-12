@@ -4,6 +4,11 @@ fu! paperwork#buffer#replace(text)
     else
         let l:text = a:text
     endif
+
+    " save paste setting and reapply it afterwards
+    let l:paste = &paste
+    set paste
+
     " Mark current position
     normal! m'
     normal! 1,$d
@@ -11,6 +16,8 @@ fu! paperwork#buffer#replace(text)
     " silent for sidebar buffer
     silent! normal! w!
     normal! ''
+
+    let &paste = l:paste
 endfu
 
 fu! paperwork#buffer#append(text)
