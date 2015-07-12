@@ -1,9 +1,9 @@
-fu! s:default_set(name, value)
-    " Checks if the passed variable exists in scope g:, if not it assigns the
-    " passed default value
-    let l:val = get(g:, a:name, a:value)
-    call paperwork#base#debug(a:name . ' with value ' . l:val)
-    execute 'let g:' . a:name . '=' . l:val
+fu! s:default_set(var, value)
+    " Sets variable a:var if it hasn't been set by the user
+    if !exists(a:var)
+        execute 'let ' . a:var . '=' . a:value
+        call paperwork#base#debug(a:var . ' loaded with default ' . a:value)
+    endif
 endfu
 
 fu! paperwork#base#debug(message)
@@ -23,11 +23,11 @@ endfu
 fu! paperwork#base#variables_valid()
     " Checks mandatory and optional variables
     let l:valid = 1
-    let l:prefix = 'paperwork_'
+    let l:prefix = 'g:paperwork_'
 
     let l:variables = ['host', 'user', 'password']
     for l:var in l:variables
-        let l:var = 'g:' . l:prefix . l:var
+        let l:var = l:prefix . l:var
         if !exists(l:var)
             echoerr l:var . ' needed'
             let l:valid = 0
