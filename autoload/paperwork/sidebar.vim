@@ -15,10 +15,10 @@ fu! paperwork#sidebar#open()
     for l:notebook_id in keys(g:paperwork_notebooks)
         let l:notebook = g:paperwork_notebooks[l:notebook_id]
 
-        call paperwork#buffer#append(l:notebook['title'] . s:spacer . l:notebook['id'])
-        for l:note_id in keys(l:notebook['notes'])
-            let l:note = l:notebook['notes'][l:note_id]
-            call paperwork#buffer#append(g:paperwork_sidebar_indent . l:note['title'] . s:spacer . l:note['id'] . s:spacer . l:notebook_id)
+        call paperwork#buffer#append(l:notebook.title . s:spacer . l:notebook.id)
+        for l:note_id in keys(l:notebook.notes)
+            let l:note = l:notebook.notes[l:note_id]
+            call paperwork#buffer#append(g:paperwork_sidebar_indent . l:note.title . s:spacer . l:note.id . s:spacer . l:notebook_id)
         endfor
 
         call paperwork#buffer#append('')

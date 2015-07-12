@@ -32,15 +32,15 @@ fu! s:request(func, node, ...)
     endif
 
     let l:ret = call('webapi#http#' . a:func, [l:url, l:param, s:header, l:method])
-    if l:ret['status'] != '200'
+    if l:ret.status != '200'
         " An error during the
-        echoerr 'Error! HTTP status code: ' . l:ret['status']
+        echoerr 'Error! HTTP status code: ' . l:ret.status
         echoerr 'The full reponse is being appended to your current buffer, if the problem persists while your paperwork server works fine please submit an issue at ' . g:paperwork_uri
         call append(line('$'), string(l:ret))
         return
     endif
 
-    return webapi#json#decode(l:ret['content'])['response']
+    return webapi#json#decode(l:ret.content).response
 endfu
 
 fu! s:get(node, ...)

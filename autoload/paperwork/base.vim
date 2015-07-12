@@ -64,27 +64,27 @@ fu! paperwork#base#pull()
 
     for l:notebook in paperwork#api#notebooks_list()
         " Ignore 'All Notes' dictionary
-        if l:notebook['type'] != 2
-            call paperwork#base#debug('Parsing notebook ' . l:notebook['title'] . ' with id '. l:notebook['id'])
+        if l:notebook.type != 2
+            call paperwork#base#debug('Parsing notebook ' . l:notebook.title . ' with id '. l:notebook.id)
             let l:notebook = {
-                        \ 'id': l:notebook['id'],
-                        \ 'title': l:notebook['title'],
+                        \ 'id': l:notebook.id,
+                        \ 'title': l:notebook.title,
                         \ 'notes': {},
                         \ }
 
-            for l:note in paperwork#api#notes_list(l:notebook['id'])
+            for l:note in paperwork#api#notes_list(l:notebook.id)
                 let l:note = {
-                            \ 'id': l:note['id'],
-                            \ 'notebook_id': l:note['notebook_id'],
-                            \ 'title': l:note['version']['title'],
-                            \ 'content': l:note['version']['content'],
+                            \ 'id': l:note.id,
+                            \ 'notebook_id': l:note.notebook_id,
+                            \ 'title': l:note.version.title,
+                            \ 'content': l:note.version.content,
                             \ }
-                call paperwork#base#debug('Parsed note ' . l:note['title'] . ' with id ' . l:note['id'])
-                let l:notebook['notes'][l:note['id']] = l:note
+                call paperwork#base#debug('Parsed note ' . l:note.title . ' with id ' . l:note.id)
+                let l:notebook.notes[l:note.id] = l:note
             endfor
 
-            let g:paperwork_notebooks[l:notebook['id']] = l:notebook
-            call paperwork#base#debug('Finished parsing notebook ' . l:notebook['id'])
+            let g:paperwork_notebooks[l:notebook.id] = l:notebook
+            call paperwork#base#debug('Finished parsing notebook ' . l:notebook.id)
         else
             call paperwork#base#debug('Ignoring all notes notebook')
         endif

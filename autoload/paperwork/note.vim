@@ -26,7 +26,7 @@ fu! paperwork#note#open()
     execute 'edit! ' . s:filename_get(l:line[2])
 
     let [b:title, l:empty, b:id, l:empty, b:notebook_id] = l:line
-    call paperwork#buffer#replace(split(g:paperwork_notebooks[b:notebook_id]['notes'][b:id]['content'], '\n'))
+    call paperwork#buffer#replace(split(g:paperwork_notebooks[b:notebook_id].notes[b:id].content, '\n'))
 
     call paperwork#base#autocmd_buffer('BufWritePost', 'paperwork#note#write')
 endfu
@@ -37,5 +37,5 @@ fu! paperwork#note#write()
     call paperwork#api#note_update(b:notebook_id, b:id, b:title, l:content)
 
     call paperwork#base#debug('Host updated, updating local dict')
-    let g:paperwork_notebooks[b:notebook_id]['notes'][b:id]['content'] = l:content
+    let g:paperwork_notebooks[b:notebook_id].notes[b:id].content = l:content
 endfu
