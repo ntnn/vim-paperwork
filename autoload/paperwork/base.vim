@@ -39,7 +39,7 @@ fu! paperwork#base#variables_valid()
     endif
 
     let l:defaults = {
-                \ 'debug': 1,
+                \ 'debug': 0,
                 \ 'sidebar_width': 40,
                 \ 'sidebar_indent': eval("&expandtab ? '\"' . repeat(' ', &shiftwidth) . '\"' : '\t'"),
                 \ 'sidebar_folding': 1,
