@@ -104,7 +104,7 @@ fu! s:autocmd_create(groups, func)
         au!
         execute 'au ' . a:groups . ' call ' . a:func . '()'
     aug END
-endfu 
+endfu
 
 fu! paperwork#base#autocmd_buffer(groups, func)
     call s:autocmd_create(a:groups . ' <buffer>', a:func)

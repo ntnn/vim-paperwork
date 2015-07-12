@@ -6,6 +6,12 @@ else
         finish
     endif
 
+    let g:paperwork_async = 1
+    if globpath(&rtp, 'autoload/xolox/misc/async.vim') == ''
+        let g:paperwork_async = 0
+    endif
+
+
     let g:paperwork_version = '0.1a'
     let g:paperwork_uri = 'https://github.com/ntnn/vim-paperwork'
 endif
