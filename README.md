@@ -17,7 +17,7 @@ Define the following variables:
 ```viml
 g:paperwork_host = 'host'
 g:paperwork_user = 'user'
-g:paperwork_password = 'password'
+g:paperwork_password = 'password' " not recommended
 ```
 
 # Usage
